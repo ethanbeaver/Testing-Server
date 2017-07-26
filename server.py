@@ -19,7 +19,7 @@ def status_Code_Helper(path):
         print("Enter status code to return:")
         return input()
     elif re.match('/[1-5]\d\d', path):
-        return int(path[1:3])
+        return int(path[1:4])
     else:
         return 404
 
