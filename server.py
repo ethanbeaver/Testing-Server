@@ -10,68 +10,39 @@ HOST_NAME = 'localhost'
 PORT_NUMBER = 8004
 
 
+def status_Code_Helper(path):
+    if path in {'/accept', '/success'}:
+        return 200
+    elif path in {'/reject', '/fail'}:
+        return 500
+    elif path == '/':
+        print("Enter status code to return:")
+        return input()
+    elif re.match('/[1-5]\d\d', path):
+        return int(path[1:3])
+    else:
+        return 404
+
+def header_Helper(s, status):
+    s.send_response(status)
+    s.send_header("Content-type", "text/html")
+    s.end_headers()
+
+
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_HEAD(s):
-        if s.path in {'/accept', '/success'}:
-            status = 200
-        elif s.path in {'reject', '/fail'}:
-            status = 500
-        elif s.path == '/':
-            print("Enter status code to return:")
-            status = input()
-        elif re.match('/[1-5]\d\d', s.path):
-            status = s.path[1:3]
-        else:
-            s.send_response(404)
-            s.send_header("Content-type", "text/html")
-            s.end_headers()
-            s.wfile.write("404: Page Not Found")
-            return
-        s.send_response(status)
-        s.send_header("Content-type", "text/html")
-        s.end_headers()
+        status = status_Code_Helper(s.path)
+        header_Helper(s, status)
     def do_GET(s):
-        if s.path in {'/accept', '/success'}:
-            status = 200
-        elif s.path in {'reject', '/fail'}:
-            status = 500
-        elif s.path == '/':
-            print("Enter status code to return:")
-            status = input()
-        elif re.match('/[1-5]\d\d', s.path):
-            status = int(s.path[1:4])
-        else:
-            s.send_response(404)
-            s.send_header("Content-type", "text/html")
-            s.end_headers()
-            s.wfile.write("404: Page Not Found")
-            return
-        s.send_response(status)
-        s.send_header("Content-type", "text/html")
-        s.end_headers()
+        status = status_Code_Helper(s.path)
+        header_Helper(s, status)
         s.wfile.write("<html><head><title>Ethan's Testing Server</title></head>")
         s.wfile.write("<body><h1>Status Code: %s</h1><p>You've reached Ethan's Test Server. Thanks for using this service.</p>" % status)
         s.wfile.write("<p>You accessed path: '%s' via a GET request</p>" % s.path)
         s.wfile.write("<p>Powered by Python</p></body></html>")
     def do_POST(s):
-        if s.path in {'/accept', '/success'}:
-            status = 200
-        elif s.path in {'reject', '/fail'}:
-            status = 500
-        elif s.path == '/':
-            print("Enter status code to return:")
-            status = input()
-        elif re.match('/[1-5]\d\d', s.path):
-            status = s.path[1:3]
-        else:
-            s.send_response(404)
-            s.send_header("Content-type", "text/html")
-            s.end_headers()
-            s.wfile.write("404: Page Not Found")
-            return
-        s.send_response(status)
-        s.send_header("Content-type", "text/html")
-        s.end_headers()
+        status = status_Code_Helper(s.path)
+        header_Helper(s, status)
         s.wfile.write("<html><head><title>Ethan's Testing Server</title></head>")
         s.wfile.write("<body><h1>Status Code: %s</h1><p>You've reached Ethan's Test Server. Thanks for using this service.</p>" % status)
         data = s.rfile.read(int(s.headers['Content-Length']))
