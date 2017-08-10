@@ -11,6 +11,7 @@ PORT_NUMBER = 8004
 
 
 def status_Code_Helper(path):
+    path = path.split('?', 1)[0]
     if path in {'/accept', '/success'}:
         return 200
     elif path in {'/reject', '/fail'}:
