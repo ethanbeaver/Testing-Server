@@ -34,6 +34,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_HEAD(s):
         status = status_Code_Helper(s.path)
         header_Helper(s, status)
+
     def do_GET(s):
         status = status_Code_Helper(s.path)
         header_Helper(s, status)
@@ -41,16 +42,19 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         s.wfile.write("<body><h1>Status Code: %s</h1><p>You've reached Ethan's Test Server. Thanks for using this service.</p>" % status)
         s.wfile.write("<p>You accessed path: '%s' via a GET request</p>" % s.path)
         s.wfile.write("<p>Powered by Python</p></body></html>")
+
     def do_POST(s):
+        data = s.rfile.read(int(s.headers['Content-Length']))
+        wrapper = textwrap.TextWrapper(initial_indent="* ", subsequent_indent="*   ")
+        print(wrapper.fill(data))
+        # Write response
         status = status_Code_Helper(s.path)
         header_Helper(s, status)
         s.wfile.write("<html><head><title>Ethan's Testing Server</title></head>")
         s.wfile.write("<body><h1>Status Code: %s</h1><p>You've reached Ethan's Test Server. Thanks for using this service.</p>" % status)
-        data = s.rfile.read(int(s.headers['Content-Length']))
         s.wfile.write("<p>You sent data: %s</p>" % data)
-        wrapper = textwrap.TextWrapper(initial_indent="* ", subsequent_indent="*   ")
-        print(wrapper.fill(data))
         s.wfile.write("<p>Powered by Python</p></body></html>")
+
 
 if __name__ == '__main__':
     server_class = BaseHTTPServer.HTTPServer
